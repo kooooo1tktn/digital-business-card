@@ -1,4 +1,4 @@
-# Logs
+# ログファイル
 logs
 *.log
 npm-debug.log*
@@ -7,19 +7,86 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# 依存関係
 node_modules
 dist
 dist-ssr
 *.local
 
-# Editor directories and files
+# TypeScriptビルドファイル
+*.tsbuildinfo
+tsconfig.tsbuildinfo
+
+# Vite関連
+.vite/
+vite.config.ts.timestamp-*
+
+# エディタとIDE
 .vscode/*
 !.vscode/extensions.json
-.idea
-.DS_Store
+.idea/
+*.sublime-project
+*.sublime-workspace
+.project
+*.swp
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
+*.code-workspace
+.settings/
+.history/
+
+# Firebase設定
+.firebase/
+firebase-debug.log
+firebase-debug.*.log
+firebase-key.json
 digital-business-card-f0acf-ca99549f4ca8.json
+
+# テスト関連
+coverage/
+.nyc_output/
+__snapshots__/
+*.snap
+
+# ビルド出力
+.cache/
+.build/
+build/
+out/
+
+# 環境変数
+.env
+.env.*
+!.env.example
+.env.local
+.env.development
+.env.production
+
+# OS生成ファイル
+.DS_Store
+.DS_Store?
+.DS_Store.*
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Icon?
+
+# パッケージマネージャー
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+.pnp.*
+
+# その他
+*.temp
+*.tmp
+*.bak
+.cache
