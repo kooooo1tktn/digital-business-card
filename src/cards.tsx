@@ -7,7 +7,7 @@ export const Cards = () => {
         <p>Cards</p>
         <div>
           <p>
-            <Link to="/cards/sample_id">ID: sample_id</Link>
+            <Link to="/cards/sample-id">ID: sample-id</Link>
           </p>
         </div>
       </div>
