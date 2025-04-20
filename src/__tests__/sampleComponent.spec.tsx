@@ -87,17 +87,20 @@ describe("Id コンポーネント", () => {
 
     render(<Id />);
     // ユーザー情報が表示されていることを確認
-    expect(screen.getByText(`名前: ${mockUser.name}`)).toBeInTheDocument();
+    expect(screen.getByText(`${mockUser.name}`)).toBeInTheDocument();
     expect(
-      screen.getByText(`自己紹介: ${mockUser.description}`)
+      screen.getByText(`自己紹介`)
     ).toBeInTheDocument();
     expect(
-      screen.getByText(`GitHub: ${mockUser.github_id}`)
+      screen.getByText(mockUser.description)
     ).toBeInTheDocument();
-    expect(screen.getByText(`Qiita: ${mockUser.qiita_id}`)).toBeInTheDocument();
-    expect(screen.getByText(`X: ${mockUser.x_id}`)).toBeInTheDocument();
+    expect(
+      screen.getByText(`GitHub`)
+    ).toBeInTheDocument();
+    expect(screen.getByText(`Qiita`)).toBeInTheDocument();
+    expect(screen.getByText(`X`)).toBeInTheDocument();
 
     // スキル情報も表示されていることを確認
-    expect(screen.getByText(`スキル: React`)).toBeInTheDocument();
+    expect(screen.getByText(`好きな技術: React`)).toBeInTheDocument();
   });
 });

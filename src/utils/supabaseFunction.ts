@@ -25,7 +25,6 @@ export async function getUserById(userId: string) {
     )
     .eq("user_id", userId)
     .single();
-
   if (error) {
     if (error.code === "PGRST116") {
       // レコードが見つからない場合のエラー
@@ -35,12 +34,10 @@ export async function getUserById(userId: string) {
     console.error(`Error fetching user data: ${error.message}`, error);
     throw new Error(`データ取得エラー: ${error.message}`);
   }
-
   if (!data) {
     // データが空の場合(通常は.single()でエラーになるはずだが、念のため)
     throw new Error(`データが見つかりません: ${userId}`);
   }
-
   console.log("User Data:", data);
   return data;
 }

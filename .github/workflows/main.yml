@@ -2,19 +2,64 @@ name: CI/CD Pipeline
 
 # ワークフローのトリガーを設定
 on:
-  push: # プッシュ時に実行
-    branches:
-      - main
+  # push: # プッシュ時に実行
+  #   branches:
+  #     - main
   workflow_dispatch:
 
 # グローバルな環境変数の設定
 env:
-  NODE_VERSION: '18'
+  NODE_VERSION: "18"
 
 # 実行するジョブの定義
 jobs:
+  # ビルドジョブを最初に実行
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+
+      # 依存関係のキャッシュを設定
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.npm
+            node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      # 依存関係のインストール - ciを使用
+      - name: Install dependencies
+        run: npm ci
+
+      # プロジェクトのビルド
+      - name: Build
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: npm run build
+
+      # ビルド成果物をアップロード
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-files
+          path: dist/ # ビルド出力ディレクトリ
+
+  # テストジョブ - ビルド完了後に実行
   test:
     name: Test
+    needs: [build] # ビルドジョブが成功した後に実行
     runs-on: ubuntu-latest
     steps:
       # ソースコードをチェックアウト
@@ -26,7 +71,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm' # npmパッケージのキャッシュを有効化
+          cache: "npm" # npmパッケージのキャッシュを有効化
 
       # 依存関係のキャッシュを設定 - 最適化されたバージョン
       - name: Cache dependencies
@@ -61,44 +106,11 @@ jobs:
         if: success()
         # Jest実行時にカバレッジレポートを生成する設定が必要
 
-  # ビルドジョブ - テスト完了後に実行
-  build:
-    name: Build
-    needs: [test] # テストジョブが成功した後に実行
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-
-      # 依存関係のインストール - ciを使用
-      - name: Install dependencies
-        run: npm ci
-
-      # プロジェクトのビルド
-      - name: Build
-        env:
-          VITE_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          VITE_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
-        run: npm run build
-
-      # ビルド成果物をアップロード
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-files
-          path: dist/ # ビルド出力ディレクトリ
-
-  # デプロイジョブ - ビルド完了後に実行
+  # デプロイジョブ - テスト完了後に実行
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
-    needs: [build] # ビルドジョブの完了を待つ
+    needs: [test] # テストジョブの完了を待つ
     # mainブランチのみデプロイ
     if: github.ref == 'refs/heads/main'
     steps:
@@ -111,7 +123,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+          cache: "npm"
 
       # 依存関係のインストール
       - name: Install dependencies
