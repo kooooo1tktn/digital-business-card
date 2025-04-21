@@ -9,6 +9,9 @@ export const Cards = () => {
           <p>
             <Link to="/cards/sample-id">ID: sample-id</Link>
           </p>
+          <p>
+            <Link to="/cards/register">登録画面</Link>
+          </p>
         </div>
       </div>
     </>
