@@ -23,8 +23,8 @@ export const Register = () => {
 
   const {
     register,
-    handleSubmit,
-    reset,
+    // handleSubmit,
+    // reset,
     formState: { errors },
   } = useForm<FormData>({ mode: "onChange" });
 
