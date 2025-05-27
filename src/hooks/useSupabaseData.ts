@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { User } from "../types";
-import { getSupabase, getUserById } from "../utils/supabaseFunction";
+import { getSupabase, getUserById } from "../services/supabase/supabaseFunction";
 
 // ユーザーデータを取得するためのカスタムフック
 export function useGetUsers() {
