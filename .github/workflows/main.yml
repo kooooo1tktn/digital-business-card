@@ -61,6 +61,11 @@ jobs:
     name: Test
     needs: [build] # ビルドジョブが成功した後に実行
     runs-on: ubuntu-latest
+
+    env:
+      VITE_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      VITE_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+
     steps:
       # ソースコードをチェックアウト
       - name: Checkout code
