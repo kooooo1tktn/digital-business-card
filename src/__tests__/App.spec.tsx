@@ -157,8 +157,17 @@ describe("名刺登録ページの確認", () => {
     const mockNavigate = jest.fn();
     (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
 
+    type FormData = {
+      name: string;
+      description: string;
+      github_id: string;
+      qiita_id: string;
+      x_id: string;
+      skill_id: number;
+    };
+
     // フォーム送信を実際に実行するモック
-    let formSubmitCallback: any;
+    let formSubmitCallback: ((data: FormData) => Promise<void>) | undefined;
 
     (useForm as jest.Mock).mockReturnValue({
       register: jest.fn(() => ({})),
@@ -166,7 +175,7 @@ describe("名刺登録ページの確認", () => {
         formSubmitCallback = callback;
         return jest.fn((e) => {
           e?.preventDefault?.();
-          return formSubmitCallback({
+          return callback({
             name: "テストユーザー",
             description: "テスト説明",
             github_id: "test-github",
@@ -207,7 +216,7 @@ describe("名刺登録ページの確認", () => {
           insert: jest.fn().mockReturnValue({
             select: jest.fn().mockReturnValue({
               single: jest.fn().mockResolvedValue({
-                data: { user_id: "test-user-id" },
+                data: { user_id: "test-user-id", name: "テストユーザー" },
                 error: null,
               }),
             }),
@@ -229,6 +238,11 @@ describe("名刺登録ページの確認", () => {
 
     render(<Register />);
 
+    // formSubmitCallbackが初期化されているかチェック
+    if (!formSubmitCallback) {
+      throw new Error("formSubmitCallback was not initialized");
+    }
+
     // フォーム送信を直接実行
     await formSubmitCallback({
       name: "テストユーザー",
@@ -241,7 +255,6 @@ describe("名刺登録ページの確認", () => {
 
     // 非同期処理の完了を待つ
     await new Promise((resolve) => setTimeout(resolve, 200));
-
     expect(mockNavigate).toHaveBeenCalledWith("/");
   });
 });
