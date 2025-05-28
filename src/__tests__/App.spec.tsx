@@ -1,10 +1,11 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { UserDetail } from "../pages/UserDetail";
 import { useNavigate, useParams } from "react-router-dom";
 import { useGetUserById } from "../hooks/useSupabaseData";
 import { useForm } from "react-hook-form";
 import { Register } from "../pages/Register";
 import * as supabaseModule from "../services/supabase/supabase";
+import { Cards } from "../pages/Cards";
 
 // React Router のモック
 jest.mock("react-router-dom", () => ({
@@ -187,9 +188,6 @@ describe("名刺登録ページの確認", () => {
       }),
       reset: jest.fn(),
       formState: { errors: {} },
-      watch: jest.fn(),
-      setValue: jest.fn(),
-      getValues: jest.fn(),
     });
 
     // スキルデータ取得のモック
@@ -256,5 +254,213 @@ describe("名刺登録ページの確認", () => {
     // 非同期処理の完了を待つ
     await new Promise((resolve) => setTimeout(resolve, 200));
     expect(mockNavigate).toHaveBeenCalledWith("/");
+  });
+
+  // IDが未入力時にエラ-メッセージが表示されることを確認
+  it("IDが未入力の場合、エラーメッセージが表示される", () => {
+    // useFormのモック実装
+    (useForm as jest.Mock).mockReturnValue({
+      register: jest.fn(),
+      handleSubmit: jest.fn(),
+      reset: jest.fn(),
+      formState: {
+        errors: {
+          user_id: { type: "required", message: "英単語の入力は必須です" },
+        },
+      },
+    });
+
+    // useNavigateのモック実装
+    (useNavigate as jest.Mock).mockReturnValue(jest.fn());
+
+    // スキルデータのモック
+    jest.spyOn(supabaseModule.supabase, "from").mockImplementation(() => {
+      const mockBuilder = {
+        select: jest.fn().mockReturnValue({
+          data: [{ id: 1, name: "React" }],
+          error: null,
+        }),
+      };
+      return mockBuilder as unknown as ReturnType<
+        typeof supabaseModule.supabase.from
+      >;
+    });
+
+    render(<Register />);
+
+    // エラ-メッセージが表示されていることを確認
+    expect(screen.getByText("英単語の入力は必須です")).toBeInTheDocument();
+  });
+
+  // 名前が未入力時にエラーメッセージが表示されることを確認
+  it("名前が未入力の場合、エラ-メッセージが表示される", () => {
+    // useFormのモック実装
+    (useForm as jest.Mock).mockReturnValue({
+      register: jest.fn(),
+      handleSubmit: jest.fn(),
+      reset: jest.fn(),
+      formState: {
+        errors: {
+          name: { type: "required", message: "名前の入力は必須です" },
+        },
+      },
+    });
+
+    // useNavigateのモック実装
+    (useNavigate as jest.Mock).mockReturnValue(jest.fn());
+
+    // スキルデータのモック
+    jest.spyOn(supabaseModule.supabase, "from").mockImplementation(() => {
+      const mockBuilder = {
+        select: jest.fn().mockReturnValue({
+          data: [{ id: 1, name: "React" }],
+          error: null,
+        }),
+      };
+      return mockBuilder as unknown as ReturnType<
+        typeof supabaseModule.supabase.from
+      >;
+    });
+
+    render(<Register />);
+
+    // エラーメッセージが表示されていることを確認
+    expect(screen.getByText("名前の入力は必須です")).toBeInTheDocument();
+  });
+
+  // 自己紹介が未入力時にエラーメッセージが表示されることを確認
+  it("自己紹介が未入力の場合、エラーメッセージが表示される", () => {
+    // useFormのモック実装
+    (useForm as jest.Mock).mockReturnValue({
+      register: jest.fn(),
+      handleSubmit: jest.fn(),
+      reset: jest.fn(),
+      formState: {
+        errors: {
+          description: {
+            type: "required",
+            message: "自己紹介の入力は必須です",
+          },
+        },
+      },
+    });
+
+    // useNavigateのモック実装
+    (useNavigate as jest.Mock).mockReturnValue(jest.fn());
+
+    // スキルデータのモック
+    jest.spyOn(supabaseModule.supabase, "from").mockImplementation(() => {
+      const mockBuilder = {
+        select: jest.fn().mockReturnValue({
+          data: [{ id: 1, name: "React" }],
+          error: null,
+        }),
+      };
+      return mockBuilder as unknown as ReturnType<
+        typeof supabaseModule.supabase.from
+      >;
+    });
+
+    render(<Register />);
+
+    // エラーメッセージが表示されていることを確認
+    expect(screen.getByText("自己紹介の入力は必須です")).toBeInTheDocument();
+  });
+
+  // オプション未選択時にエラーメッセージが表示されること確認
+  it("オプション未選択の場合、エラーメッセージが表示される", () => {
+    // useFormのモック実装
+    (useForm as jest.Mock).mockReturnValue({
+      register: jest.fn(),
+      handleSubmit: jest.fn(),
+      reset: jest.fn(),
+      formState: {
+        errors: {
+          skill_id: { type: "required", message: "入力必須項目です" },
+        },
+      },
+    });
+
+    // useNavigateのモック実装
+    (useNavigate as jest.Mock).mockReturnValue(jest.fn());
+
+    // スキルデータのモック
+    jest.spyOn(supabaseModule.supabase, "from").mockImplementation(() => {
+      const mockBuilder = {
+        select: jest.fn().mockReturnValue({
+          data: [{ id: 1, name: "React" }],
+          error: null,
+        }),
+      };
+      return mockBuilder as unknown as ReturnType<
+        typeof supabaseModule.supabase.from
+      >;
+    });
+
+    render(<Register />);
+
+    // エラーメッセージが表示されていることを確認
+    expect(screen.getByText("入力必須項目です")).toBeInTheDocument();
+  });
+
+  describe("トップページの確認", () => {
+    it("タイトルが表示されている", () => {
+      render(<Cards />);
+      // タイトルが表示されていることを確認
+      expect(screen.getByText("デジタル名刺アプリ")).toBeInTheDocument();
+    });
+    // IDを入力してボタンを押すと/cards/:idに遷移する(useNavigateのパスをみる)
+    it("IDを入力してボタンを押すと/cards/:idに遷移する", () => {
+      const mockNavigate = jest.fn();
+      (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
+
+      render(<Cards />);
+
+      // ID入力フィールドを取得
+      const userIdInput = screen.getByPlaceholderText("ユーザーIDを入力");
+      // 検索ボタンを取得
+      const searchButton = screen.getByText("名刺を見る");
+
+      // IDを入力
+      fireEvent.change(userIdInput, { target: { value: "sample-id" } });
+      // 検索ボタンをクリック
+      fireEvent.click(searchButton);
+
+      // /cards/sample-idに遷移することを確認
+      expect(mockNavigate).toHaveBeenCalledWith("/cards/sample-id");
+    });
+
+    // IDを未入力でボタンを押すとエラーメッセージが表示される
+    it("IDを未入力でボタンを押すとエラーメッセージが表示される", () => {
+      render(<Cards />);
+
+      // 検索ボタンを取得
+      const searchButton = screen.getByText("名刺を見る");
+
+      // 検索ボタンをクリック
+      fireEvent.click(searchButton);
+
+      // エラーメッセージが表示されていることを確認
+      expect(
+        screen.getByText("ユーザーIDを入力してください")
+      ).toBeInTheDocument();
+    });
+
+    // 新規登録はこちらを押すと/cards/registerに遷移する
+    it("新規登録はこちらを押すと/cards/registerに遷移する", () => {
+      const mockNavigate = jest.fn();
+      (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
+
+      render(<Cards />);
+
+      // 新規登録リンクを取得
+      const registerLink = screen.getByText("新規登録はこちら");
+
+      // リンクをクリック
+      fireEvent.click(registerLink);
+
+      // /cards/registerに遷移することを確認
+      expect(mockNavigate).toHaveBeenCalledWith("/cards/register");
+    });
   });
 });

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   Box,
   Button,
@@ -31,6 +31,12 @@ export const Cards = () => {
     navigate(`/cards/${userId}`);
   };
 
+  // 新規登録ボタンをクリックした時の処理
+  const handleRegister = () => {
+    // 新規登録ページに遷移
+    navigate("/cards/register");
+  };
+
   return (
     <Box p={5} maxWidth="800px" mx="auto">
       <Heading as="h1" mb={6}>
@@ -58,7 +64,7 @@ export const Cards = () => {
               placeholder="ユーザーIDを入力"
             />
             <Button colorScheme="blue" onClick={handleSearch} width="full">
-              検索
+              名刺を見る
             </Button>
           </VStack>
           {inputError && (
@@ -74,13 +80,12 @@ export const Cards = () => {
       {/* 登録ページへのリンク */}
       <Box mb={6}>
         <Button
-          as={Link}
-          to="/cards/register"
           colorScheme="green"
+          onClick={handleRegister}
           size="lg"
           width="full"
         >
-          名刺を登録
+          新規登録はこちら
         </Button>
       </Box>
     </Box>
