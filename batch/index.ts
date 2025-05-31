@@ -32,6 +32,8 @@ async function deletePreviousDayData() {
     const { error: userSkillError } = await supabase
       .from("user_skill")
       .delete()
+      .gte("created_at", `${yesterday}T00:00:00.000Z`)
+      .lt("created_at", `${yesterday}T23:59:59.999Z`);
 
     if (userSkillError) {
       console.error("user_skill削除エラー:", userSkillError);
@@ -43,6 +45,8 @@ async function deletePreviousDayData() {
     const { error: usersError } = await supabase
       .from("users")
       .delete()
+      .gte("created_at", `${yesterday}T00:00:00.000Z`)
+      .lt("created_at", `${yesterday}T23:59:59.999Z`);
 
     if (usersError) {
       console.error("users削除エラー:", usersError);
