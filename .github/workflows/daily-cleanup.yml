@@ -8,7 +8,7 @@ on:
 
 # グローバルな環境変数の設定
 env:
-  NODE_VERSION: "18"
+  NODE_VERSION: "20"
 
 # 実行するジョブの定義
 jobs:
