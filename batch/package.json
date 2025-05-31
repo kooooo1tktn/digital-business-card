@@ -1,0 +1,14 @@
+{
+  "name": "digital-business-card",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "eslint .",
+    "preview": "vite preview",
+    "test": "jest",
+    "batch:delete": "npx ts-node --esm ./batch/index.ts"
+  }
+}
