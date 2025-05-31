@@ -9,6 +9,6 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "jest",
-    "batch:delete": "npx ts-node --esm ./batch/index.ts"
+    "batch:delete": "NODE_OPTIONS='--loader ts-node/esm' npx ts-node ./batch/index.ts"
   }
 }
